@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+
 @Component
 public class BookDaoImpl implements BookDao {
 
@@ -27,11 +28,18 @@ public class BookDaoImpl implements BookDao {
                 book.getTitle(),
                 book.getAuthorId()
         );
-
     }
 
     @Override
-    public Optional<Book> find(String isbn) {
+    public List<Book> find() {
+        return jdbcTemplate.query(
+                "SELECT isbn, title, author_id from books",
+                new BookRowMapper()
+        );
+    }
+
+    @Override
+    public Optional<Book> findOne(String isbn) {
         List<Book> results = jdbcTemplate.query(
                 "SELECT isbn, title, author_id from books WHERE isbn = ? LIMIT 1",
                 new BookRowMapper(),
@@ -39,7 +47,7 @@ public class BookDaoImpl implements BookDao {
         return results.stream().findFirst();
     }
 
-    public static class BookRowMapper implements RowMapper<Book>{
+    public static class BookRowMapper implements RowMapper<Book> {
 
 
         @Override
