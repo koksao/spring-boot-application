@@ -1,7 +1,7 @@
 package com.devtiro.database.repositories;
 
-import com.devtiro.database.domain.Book;
+import com.devtiro.database.domain.BookEntity;
 import org.springframework.data.repository.CrudRepository;
 
-public interface BookRepository extends CrudRepository<Book,String> {
+public interface BookRepository extends CrudRepository<BookEntity,String> {
 }
