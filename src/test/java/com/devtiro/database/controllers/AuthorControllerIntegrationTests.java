@@ -29,7 +29,7 @@ public class AuthorControllerIntegrationTests {
     private AuthorService authorService;
 
     @Autowired
-    public AuthorControllerIntegrationTests(MockMvc mockMvc,AuthorService authorService) {
+    public AuthorControllerIntegrationTests(MockMvc mockMvc, AuthorService authorService) {
         this.mockMvc = mockMvc;
         this.objectMapper = new ObjectMapper();
         this.authorService = authorService;
@@ -70,7 +70,7 @@ public class AuthorControllerIntegrationTests {
     }
 
     @Test
-    public void testThatListAuthorsReturnsHttpStatus200() throws Exception{
+    public void testThatListAuthorsReturnsHttpStatus200() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/authors")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -78,7 +78,7 @@ public class AuthorControllerIntegrationTests {
     }
 
     @Test
-    public void testThatListAuthorsReturnsListOfAuthors() throws Exception{
+    public void testThatListAuthorsReturnsListOfAuthors() throws Exception {
         AuthorEntity testAuthorEntity = TestDataUtil.createTestAuthorA();
         authorService.createAuthor(testAuthorEntity);
         mockMvc.perform(
@@ -93,4 +93,39 @@ public class AuthorControllerIntegrationTests {
         );
     }
 
+    @Test
+    public void testThatGetAuthorReturnsHttpStatus200WhenAuthorExist() throws Exception {
+        AuthorEntity testAuthorEntity = TestDataUtil.createTestAuthorA();
+        authorService.createAuthor(testAuthorEntity);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/authors/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    public void testThatGetAuthorReturnsHttpStatus404WhenNoAuthorExist() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/authors/99")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    public void testThatGetAuthorReturnsAuthorWhenAuthorExist() throws Exception {
+        AuthorEntity testAuthorEntity = TestDataUtil.createTestAuthorA();
+        authorService.createAuthor(testAuthorEntity);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/authors/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.id").value(1)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.name").value("Abigail Rose")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.age").value(80)
+        );
+    }
 }
