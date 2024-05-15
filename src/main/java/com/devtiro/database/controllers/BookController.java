@@ -25,17 +25,21 @@ public class BookController {
     }
 
     @PutMapping("/books/{isbn}")
-    public ResponseEntity<BookDto> createBook(
-            @PathVariable("isbn") String isbn,
-            @RequestBody BookDto bookDto) {
+    public ResponseEntity<BookDto> createUpdateBook(@PathVariable("isbn") String isbn, @RequestBody BookDto bookDto) {
         BookEntity bookEntity = bookMapper.mapFrom(bookDto);
-        BookEntity savedBook = bookService.createBook(isbn, bookEntity);
-        BookDto savedBookDto = bookMapper.mapTo(savedBook);
-        return new ResponseEntity<>(savedBookDto, HttpStatus.CREATED);
+        boolean bookExists = bookService.isExists(isbn);
+        BookEntity savedBookEntity = bookService.createUpdateBook(isbn, bookEntity);
+        BookDto savedUpdateBookDto = bookMapper.mapTo(savedBookEntity);
+
+        if (bookExists) {
+            return new ResponseEntity(savedUpdateBookDto, HttpStatus.OK);
+        } else {
+            return new ResponseEntity(savedUpdateBookDto, HttpStatus.CREATED);
+        }
     }
 
     @GetMapping(path = "/books")
-    public List<BookDto> listBooks(){
+    public List<BookDto> listBooks() {
         List<BookEntity> books = bookService.findAll();
         return books.stream()
                 .map(bookMapper::mapTo)
@@ -43,12 +47,13 @@ public class BookController {
     }
 
     @GetMapping(path = "/books/{isbn}")
-    public ResponseEntity<BookDto> getBook(@PathVariable("isbn") String isbn){
+    public ResponseEntity<BookDto> getBook(@PathVariable("isbn") String isbn) {
         Optional<BookEntity> foundBook = bookService.findOne(isbn);
         return foundBook.map(bookEntity -> {
             BookDto bookDto = bookMapper.mapTo(bookEntity);
             return new ResponseEntity<>(bookDto, HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
 
 }
