@@ -218,5 +218,4 @@ public class BookControllerIntegrationTests {
         ).andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
-
 }
