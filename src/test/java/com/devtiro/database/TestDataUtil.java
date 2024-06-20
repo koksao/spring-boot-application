@@ -2,12 +2,31 @@ package com.devtiro.database;
 
 import com.devtiro.database.domain.AuthorEntity;
 import com.devtiro.database.domain.BookEntity;
+import com.devtiro.database.domain.FilmAdaptationEntity;
 import com.devtiro.database.domain.dto.AuthorDto;
 import com.devtiro.database.domain.dto.BookDto;
+import com.devtiro.database.domain.dto.FilmAdaptationDto;
 
 public final class TestDataUtil {
     private TestDataUtil() {
 
+    }
+
+    public static FilmAdaptationDto createTestFilmA(){
+        return FilmAdaptationDto.builder()
+                .title("The Shadow in the Attic")
+                .director("director")
+                .yearOfProduction(1999)
+                .build();
+    }
+
+    public static FilmAdaptationEntity createTestFilmB(BookEntity book){
+        return FilmAdaptationEntity.builder()
+                .title("The Shadow in the Attic")
+                .director("director")
+                .yearOfProduction(1999)
+                .bookEntity(book)
+                .build();
     }
 
     public static AuthorEntity createTestAuthorA() {
